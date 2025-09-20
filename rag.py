@@ -35,7 +35,7 @@ def extract_text(path: str) -> str:
     return text
 
 
-def chunk_text(text: str, chunk_size: int = 600, overlap: int = 50) -> list[str]:
+def chunk_text(text: str, chunk_size: int = 300, overlap: int = 50) -> list[str]:
     """Split text into overlapping chunks of words."""
     words = text.split()
     chunks = []
@@ -82,6 +82,10 @@ def retrieve(query: str, chunks: list[str], index, k: int = 3) -> list[str]:
     """Retrieve top-k chunks relevant to the query."""
     query_embedding = model.encode([query])
     D, I = index.search(query_embedding, k)
+    results = [chunks[i] for i in I[0] if i < len(chunks)]
+
+    print("Retrieved passages:\n", results)
+
     return [chunks[i] for i in I[0] if i < len(chunks)]
 
 
@@ -89,12 +93,12 @@ def query_llm(query: str, context_chunks: list[str]) -> str:
     """Send query + context to OpenAI and return the answer."""
     context = "\n".join(context_chunks)
     prompt = f"""
-    You are an AI assistant specialized in analyzing RICO-related press releases.
-    Your task is to answer the user's question accurately based *only* on the provided context.
-    If the context does not contain the information to answer the question, state that you cannot answer based on the provided documents..
-    Question: {query}
-    Context: {context}
-    Answer:
+        You are an AI assistant analyzing RICO indictment press releases.
+        Answer the question using ONLY the provided context below.
+        If the answer is not explicitly in the context, say "Not found in context."
+        Question: {query}
+        Context: {context}
+        Answer:
     """
     try:
         response = ollama.chat(
@@ -142,6 +146,6 @@ def run_pipeline(query: str):
 
 
 if __name__ == "__main__":
-    query = "What can you tell me about the document?"
+    query = "Can you describe the people involved in this indictment? Please list the people and their charges"
     result = run_pipeline(query)
     print("Answer:\n", result)
