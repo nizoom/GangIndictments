@@ -1,0 +1,6 @@
+.env
+venv/
+.venv/
+pymupdf-venv/
+__pycache__/
+*.pyc
