@@ -5,7 +5,7 @@
 1. **Clone the repo and navigate to the project folder:**
 
 ```bash
-   git clone <repo-url>
+   git clone https://github.com/nizoom/GangIndictments
    cd GANGINDICTMENTS
 ```
 
